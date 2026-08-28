@@ -1,12 +1,14 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 import {
   comparePreSubmission,
   type PreSubmissionInput,
   type PreSubmissionIssue,
   type PreSubmissionIssueId,
-} from '../lib/compare';
+} from '../../lib/compare';
 
 const sampleProfile = {
   fullName: 'Arjun Sharma',
@@ -83,19 +85,33 @@ export default function PreSubmissionChecker() {
 
   if (!hasStarted) {
     return (
-      <section className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-semibold text-indigo-700">Residence Certificate</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">Start a new application</h1>
-        <p className="mt-3 max-w-2xl text-slate-600">
-          Use this prototype flow to compare your application details with sample data before submission.
-        </p>
-        <p className="mt-4 text-xs leading-5 text-slate-500">
-          Demo only — not connected to government systems.
-        </p>
-        <button type="button" onClick={() => setHasStarted(true)} className="mt-6 rounded-lg bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-          Start Residence Certificate application
-        </button>
-      </section>
+      <>
+        <Header />
+        <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-50">
+          <div className="section-container py-12">
+            <div className="card-elevated border-l-4 border-saffron-500 p-8 sm:p-12">
+              <p className="text-sm font-bold text-saffron-600 uppercase tracking-wide">Before You Apply</p>
+              <h1 className="mt-3 text-4xl font-bold text-indigo-900">
+                Pre-Submission Consistency Check
+              </h1>
+              <p className="mt-4 max-w-2xl text-lg text-neutral-600">
+                Catch issues before they cause rejections. Compare your application details with your supporting documents to ensure everything matches.
+              </p>
+              <p className="mt-3 text-sm text-neutral-500">
+                ℹ️ Demo only — not connected to government systems.
+              </p>
+              <button
+                type="button"
+                onClick={() => setHasStarted(true)}
+                className="btn-primary-saffron mt-8 text-base"
+              >
+                Start Consistency Check
+              </button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
     );
   }
 
@@ -103,153 +119,205 @@ export default function PreSubmissionChecker() {
   const hasCurrentIssues = hasRunCheck && issues.length > 0;
 
   return (
-    <section className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-      <header className="border-b border-slate-200 pb-5">
-        <p className="text-sm font-semibold text-indigo-700">Residence Certificate</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">Pre-submission Consistency Check</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">Sample data only. This prototype highlights possible inconsistencies before submission.</p>
-        <p className="mt-2 text-xs leading-5 text-slate-500">Demo only — not connected to government systems.</p>
-      </header>
-
-      <div className="mt-6 rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-950">
-        <p className="font-semibold">Sample citizen profile information</p>
-        <p className="mt-1">{sampleProfile.fullName} · {sampleProfile.address}</p>
-      </div>
-
-      <div className="mt-6 space-y-5">
-        <label className="block text-sm font-medium text-slate-800">
-          Full name
-          <input
-            ref={nameInputRef}
-            id="full-name"
-            value={form.fullName}
-            onChange={(event) => {
-              setForm((current) => ({ ...current, fullName: event.target.value }));
-              markForRerun();
-            }}
-            className="mt-1.5 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          />
-        </label>
-        <label className="block text-sm font-medium text-slate-800">
-          Address
-          <textarea
-            ref={addressInputRef}
-            id="address"
-            value={form.address}
-            onChange={(event) => {
-              setForm((current) => ({ ...current, address: event.target.value }));
-              markForRerun();
-            }}
-            rows={3}
-            className="mt-1.5 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          />
-        </label>
-        <fieldset className="rounded-xl border border-slate-200 p-4">
-          <legend className="px-1 text-sm font-semibold text-slate-800">Document checklist</legend>
-          <div className="mt-2 flex flex-wrap gap-x-6 gap-y-3">
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input
-                ref={uploadedBillRef}
-                id="utility-bill-uploaded"
-                type="checkbox"
-                checked={form.documentUploaded}
-                onChange={(event) => {
-                  setForm((current) => ({
-                    ...current,
-                    documentUploaded: event.target.checked,
-                    documentExpired: event.target.checked ? current.documentExpired : false,
-                  }));
-                  markForRerun();
-                }}
-                className="h-4 w-4 rounded border-slate-300 text-indigo-700 focus:ring-indigo-500"
-              />
-              Utility bill uploaded
-            </label>
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input
-                ref={expiredBillRef}
-                id="utility-bill-expired"
-                type="checkbox"
-                checked={form.documentExpired}
-                disabled={!form.documentUploaded}
-                onChange={(event) => {
-                  setForm((current) => ({ ...current, documentExpired: event.target.checked }));
-                  markForRerun();
-                }}
-                className="h-4 w-4 rounded border-slate-300 text-indigo-700 focus:ring-indigo-500 disabled:cursor-not-allowed"
-              />
-              Utility bill is expired
-            </label>
+    <>
+      <Header />
+      <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-50">
+        <div className="section-container py-12">
+          {/* Header */}
+          <div className="mb-8">
+            <p className="text-sm font-bold text-saffron-600 uppercase tracking-wide">Application Review</p>
+            <h1 className="mt-2 text-4xl font-bold text-indigo-900">
+              Pre-Submission Consistency Check
+            </h1>
+            <p className="mt-3 text-lg text-neutral-600">
+              Review sample data to identify any inconsistencies before submission.
+            </p>
           </div>
-        </fieldset>
-        {activeIssue && (
-          <p className="rounded-lg border border-indigo-200 bg-indigo-50 p-3 text-sm leading-6 text-indigo-950" role="status">
-            {correctionGuidance[activeIssue]} Make the correction, then run the check again.
-          </p>
-        )}
-        <button type="button" onClick={runCheck} className="w-full rounded-lg bg-indigo-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-          Run Pre-Submission Check
-        </button>
-      </div>
 
-      {needsRerun && (
-        <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900" role="status">
-          Your details have changed. Run the Pre-Submission Check again to update the result.
-        </p>
-      )}
-
-      {hasCurrentIssues && (
-        <section className="mt-6" aria-labelledby="check-explanation">
-          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-sm font-semibold text-amber-950">Check result</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div>
-                <h2 id="check-explanation" className="font-semibold text-slate-900">What went wrong</h2>
-                <p className="mt-1 text-sm leading-6 text-slate-700">Some details in this sample application do not match the sample profile, and the utility bill is expired.</p>
-              </div>
-              <div>
-                <h2 className="font-semibold text-slate-900">Why this matters</h2>
-                <p className="mt-1 text-sm leading-6 text-slate-700">Different or expired information can delay an application or mean it needs correction before it can continue.</p>
-              </div>
-              <div>
-                <h2 className="font-semibold text-slate-900">What should I correct</h2>
-                <p className="mt-1 text-sm leading-6 text-slate-700">Use each Fix this button to go to the matching detail, then update it to match the sample information.</p>
-              </div>
-              <div>
-                <h2 className="font-semibold text-slate-900">What should I do next</h2>
-                <p className="mt-1 text-sm leading-6 text-slate-700">Correct every item, then run the check again. JanSetu does not submit this application anywhere.</p>
-              </div>
+          {/* Sample Profile Info Box */}
+          <div className="mb-8 rounded-xl border-2 border-india-green-200 bg-india-green-50 p-6">
+            <p className="text-sm font-bold text-india-green-700 uppercase">Sample Profile Information</p>
+            <div className="mt-3 flex flex-col gap-2">
+              <p className="text-neutral-700">
+                <span className="font-semibold">Name:</span> {sampleProfile.fullName}
+              </p>
+              <p className="text-neutral-700">
+                <span className="font-semibold">Address:</span> {sampleProfile.address}
+              </p>
             </div>
           </div>
 
-          <div className="mt-3 space-y-3" aria-live="polite">
-            {issues.map((issue) => (
-              <div key={issue.id} className="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-950 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="font-semibold">{issue.title}</p>
-                  <p className="mt-1 text-sm">{issue.message}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => focusCorrection(issue.id)}
-                  aria-controls={controlIdForIssue[issue.id]}
-                  className="min-h-11 shrink-0 rounded-lg bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  Fix this
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+          {/* Form Section */}
+          <div className="mb-8 card-elevated p-8">
+            <h2 className="text-xl font-bold text-indigo-900">Your Details</h2>
 
-      {isReady && (
-        <div className="mt-6 rounded-xl border-2 border-green-300 bg-green-50 p-5 text-green-950" role="status">
-          <p className="font-semibold">No inconsistencies found</p>
-          <h2 className="mt-2 text-lg font-bold">Ready to Submit</h2>
-          <p className="mt-1 text-sm">The Pre-Submission Check found no remaining issues in this sample application. JanSetu has not submitted anything to a government system.</p>
+            <div className="mt-6 space-y-6">
+              {/* Full Name */}
+              <div>
+                <label htmlFor="full-name" className="label-base">
+                  Full Name
+                </label>
+                <input
+                  ref={nameInputRef}
+                  id="full-name"
+                  type="text"
+                  value={form.fullName}
+                  onChange={(event) => {
+                    setForm((current) => ({ ...current, fullName: event.target.value }));
+                    markForRerun();
+                  }}
+                  className="input-base mt-2"
+                  placeholder="Enter your full name"
+                />
+              </div>
+
+              {/* Address */}
+              <div>
+                <label htmlFor="address" className="label-base">
+                  Address
+                </label>
+                <textarea
+                  ref={addressInputRef}
+                  id="address"
+                  value={form.address}
+                  onChange={(event) => {
+                    setForm((current) => ({ ...current, address: event.target.value }));
+                    markForRerun();
+                  }}
+                  rows={3}
+                  className="input-base mt-2"
+                  placeholder="Enter your residential address"
+                />
+              </div>
+
+              {/* Document Checklist */}
+              <fieldset className="rounded-xl border-2 border-neutral-200 p-6">
+                <legend className="text-sm font-bold text-indigo-900">Document Checklist</legend>
+                <div className="mt-4 space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      ref={uploadedBillRef}
+                      id="utility-bill-uploaded"
+                      type="checkbox"
+                      checked={form.documentUploaded}
+                      onChange={(event) => {
+                        setForm((current) => ({
+                          ...current,
+                          documentUploaded: event.target.checked,
+                          documentExpired: event.target.checked ? current.documentExpired : false,
+                        }));
+                        markForRerun();
+                      }}
+                      className="h-5 w-5 rounded cursor-pointer accent-saffron-500"
+                    />
+                    <span className="text-neutral-700">Utility bill uploaded</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      ref={expiredBillRef}
+                      id="utility-bill-expired"
+                      type="checkbox"
+                      checked={form.documentExpired}
+                      disabled={!form.documentUploaded}
+                      onChange={(event) => {
+                        setForm((current) => ({ ...current, documentExpired: event.target.checked }));
+                        markForRerun();
+                      }}
+                      className="h-5 w-5 rounded cursor-pointer accent-danger-500 disabled:opacity-50"
+                    />
+                    <span className={form.documentUploaded ? 'text-neutral-700' : 'text-neutral-500'}>
+                      Utility bill is expired
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+
+              {/* Active Issue Guidance */}
+              {activeIssue && (
+                <div className="rounded-lg border border-saffron-300 bg-saffron-50 p-4">
+                  <p className="text-sm text-saffron-900">
+                    <span className="font-semibold">💡 Tip:</span> {correctionGuidance[activeIssue]} Make the correction, then run the check again.
+                  </p>
+                </div>
+              )}
+
+              {/* Run Check Button */}
+              <button
+                type="button"
+                onClick={runCheck}
+                className="btn-primary-saffron w-full text-base"
+              >
+                Run Pre-Submission Check
+              </button>
+            </div>
+          </div>
+
+          {/* Needs Rerun Alert */}
+          {needsRerun && (
+            <div className="mb-8 rounded-lg border border-saffron-300 bg-saffron-50 p-4">
+              <p className="text-sm text-saffron-900">
+                ⚡ Your details have changed. Run the Pre-Submission Check again to update the result.
+              </p>
+            </div>
+          )}
+
+          {/* Check Results */}
+          {hasCurrentIssues && (
+            <div className="mb-8 space-y-6">
+              {/* Result Summary */}
+              <div className="rounded-xl border-2 border-danger-300 bg-danger-50 p-8">
+                <p className="text-sm font-bold text-danger-700 uppercase">❌ Issues Found</p>
+                <p className="mt-3 text-lg font-semibold text-neutral-900">
+                  {issues.length === 1 ? '1 issue' : `${issues.length} issues`} detected
+                </p>
+                <p className="mt-2 text-neutral-700">
+                  Please review and correct the issues below before submission.
+                </p>
+              </div>
+
+              {/* Individual Issues */}
+              <div className="space-y-3">
+                {issues.map((issue) => (
+                  <div
+                    key={issue.id}
+                    className="flex flex-col gap-4 rounded-xl border-2 border-danger-200 bg-danger-50 p-6 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div>
+                      <p className="font-bold text-danger-900">{issue.title}</p>
+                      <p className="mt-1 text-sm text-danger-800">{issue.message}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => focusCorrection(issue.id)}
+                      aria-controls={controlIdForIssue[issue.id]}
+                      className="btn-danger flex-shrink-0 whitespace-nowrap text-base"
+                    >
+                      Fix This
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Ready to Submit */}
+          {isReady && (
+            <div className="rounded-xl border-2 border-india-green-300 bg-india-green-50 p-8">
+              <p className="text-sm font-bold text-india-green-700 uppercase">✓ Ready</p>
+              <h2 className="mt-2 text-2xl font-bold text-india-green-900">
+                No Inconsistencies Found
+              </h2>
+              <p className="mt-3 text-neutral-700">
+                The Pre-Submission Check found no remaining issues in this sample application. Your details are consistent with the supporting documents.
+              </p>
+              <p className="mt-4 text-xs text-neutral-600">
+                Note: JanSetu has not submitted this application anywhere. You can now proceed with confidence.
+              </p>
+            </div>
+          )}
         </div>
-      )}
-    </section>
+      </main>
+      <Footer />
+    </>
   );
 }
