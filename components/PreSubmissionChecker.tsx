@@ -1,14 +1,14 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import Header from './Header';
+import Footer from './Footer';
 import {
   comparePreSubmission,
   type PreSubmissionInput,
   type PreSubmissionIssue,
   type PreSubmissionIssueId,
-} from '../../lib/compare';
+} from '../lib/compare';
 
 const sampleProfile = {
   fullName: 'Arjun Sharma',
