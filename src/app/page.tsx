@@ -138,14 +138,14 @@ export default function HomePage() {
               <div>
                 <p className="text-sm font-bold text-danger-600 uppercase tracking-wide">The Problem</p>
                 <h2 className="mt-2 text-3xl font-bold text-indigo-900">
-                  Government Services Shouldn't Require Guesswork
+                  Government Services Shouldn&apos;t Require Guesswork
                 </h2>
                 <ul className="mt-6 space-y-4">
                   <li className="flex gap-3">
                     <span className="text-2xl">❌</span>
                     <div>
                       <p className="font-semibold text-neutral-900">Unclear Requirements</p>
-                      <p className="text-sm text-neutral-600">Don't know what documents are needed</p>
+                      <p className="text-sm text-neutral-600">Don&apos;t know what documents are needed</p>
                     </div>
                   </li>
                   <li className="flex gap-3">
